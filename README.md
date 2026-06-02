@@ -22,7 +22,7 @@
 
 1. 克隆仓库
    ```bash
-   git clone https://github.com/你的用户名/amazon-ad-assistant.git
+   git clone https://github.com/John-Z-jt/amazon-ad-assistant.git
    cd amazon-ad-assistant
    ```
 2. 安装依赖
