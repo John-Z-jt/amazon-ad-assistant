@@ -63,6 +63,12 @@ class VectorStoreService:
 
 
     def load_documents(self):
+        import sys
+        print("=== 开始加载文档 ===", file=sys.stderr)
+        # 打印当前路径和配置
+        from utils.path_tool import get_abs_path
+        print("data_path:", get_abs_path(chroma_conf["data_path"]), file=sys.stderr)
+        print("allow types:", chroma_conf["allow_knowledge_file_type"], file=sys.stderr)
 
         """从 data 文件夹加载文档并构建向量库"""
         if self.index is not None:
