@@ -1,12 +1,11 @@
 collection_name: agent
 persist_directory: chroma_db
 k: 3
-data_path: data
-md5_hex_store: md5.text
+data_path: amazon_ad_assistant/data
+md5_hex_store: amazon_ad_assistant/md5.text
 allow_knowledge_file_type: ["txt", "pdf"]
-vector_path: faiss_index.bin
-doc_path: doc_store.pkl
-
+vector_path: amazon_ad_assistant/faiss_index.bin
+doc_path: amazon_ad_assistant/doc_store.pkl
 chunk_size: 500
 chunk_overlap: 50
-separators: ["\n\n", "\n", ".", "!", "?", "。", "！", "？", " ", ""]
+separators: ["\n\n", "\n", ".", "!", "?", " ", " ", " "]
