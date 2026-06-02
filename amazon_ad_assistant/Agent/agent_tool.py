@@ -4,17 +4,23 @@ from data_df_store.data_store import store
 from langchain_core.tools import tool
 import pandas as pd
 import streamlit as st
-from Rag.rag_service import RagSummarizeService
 from ad_analyzers.budget_analyzer import get_budget_analysis
 from ad_analyzers.placement_analyzer import get_placement_analysis
 from ad_analyzers.keyword_analyzer import get_keyword_analysis
 from ad_analyzers.search_analyzer import get_search_analysis
 from ad_analyzers.search_term_trend import get_search_term_trend
 
-rag = RagSummarizeService()
+# 懒加载实现
+_rag = None
+def get_rag():
+    global _rag
+    if _rag is None:
+        from Rag.rag_service import RagSummarizeService
+        _rag = RagSummarizeService()
+    return _rag
 @tool(description = "从向量存储中检索参考资料。回答关于广告分析模块的功能、指标含义、设计原因等问题。")
 def rag_summarize(query: str) -> str:
-    return rag.rag_summarize(query)
+    return get_rag().rag_summarize(query)
 
 
 @tool(
