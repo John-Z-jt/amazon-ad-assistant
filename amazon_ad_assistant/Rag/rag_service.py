@@ -19,6 +19,7 @@ def print_prompt(prompt):
 class RagSummarizeService(object):
     def __init__(self):
         self.vector_store = VectorStoreService()
+        self.vector_store.load_documents()
         self.retriever = self.vector_store.get_retriever()
         self.prompt_text = load_rag_prompts()
         self.prompt_template = PromptTemplate.from_template(self.prompt_text)
