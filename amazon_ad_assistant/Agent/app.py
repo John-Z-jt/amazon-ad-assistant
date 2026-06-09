@@ -7,7 +7,6 @@ from data_df_store.data_store import store   # 直接导入 store 对象
 #导入动态路径函数
 from utils.path_tool import get_project_root
 from react_agent import ReactAgent
-from user_history_store import FileHistoryStore
 import time
 
 # 将真正的项目根目录加入 sys.path（其实 _parent_dir 就是根目录，但调用函数更统一）
@@ -28,8 +27,6 @@ st.set_page_config(layout="wide")
 st.title("亚马逊广告诊断助手")
 
 # 初始化session_state
-if "user_history_store" not in st.session_state:
-    st.session_state["user_history_store"] = FileHistoryStore()
 if "agent" not in st.session_state:
     st.session_state.agent = ReactAgent()  # 实例化你的Agent
 if "messages" not in st.session_state:
@@ -154,11 +151,14 @@ with tab1:
 
 
 with tab2:
-    # 给定用户id
-    session_id = "user016"
-    # 显示历史消息
-    for message in st.session_state["user_history_store"].get_history(session_id):
+    # 初始化当前会话的消息列表（存储在 session_state 中，不同用户/不同刷新自动隔离）
+    if "chat_messages" not in st.session_state:
+        st.session_state.chat_messages = []
+        
+    # 显示历史消息（来自当前会话）
+    for message in st.session_state.chat_messages:
         st.chat_message(message["role"]).write(message["content"])
+
 
     # 用户输入提示词
     prompt = st.chat_input()
