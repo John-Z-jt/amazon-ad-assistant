@@ -154,24 +154,24 @@ with tab2:
     # 初始化当前会话的消息列表（存储在 session_state 中，不同用户/不同刷新自动隔离）
     if "chat_messages" not in st.session_state:
         st.session_state.chat_messages = []
-        
+
     # 显示历史消息（来自当前会话）
     for message in st.session_state.chat_messages:
         st.chat_message(message["role"]).write(message["content"])
 
-
-    # 用户输入提示词
+    # 用户输入
     prompt = st.chat_input()
-
     if prompt:
+        # 添加用户消息到会话
+        st.session_state.chat_messages.append({"role": "user", "content": prompt})
         st.chat_message("user").write(prompt)
-        history = st.session_state["user_history_store"].get_history(session_id)
 
-        message_with_historys = history + [{"role": "user", "content": prompt}]
+        # 准备发送给 Agent 的消息列表（当前会话的所有消息）
+        messages_for_agent = st.session_state.chat_messages.copy()
+
         response_message = []
         with st.spinner("智能客服思考中..."):
-            res_stream = st.session_state["agent"].execute_stream(message_with_historys)
-
+            res_stream = st.session_state["agent"].execute_stream(messages_for_agent)
 
             def capture(generate, cache_list):
                 for chunk in generate:
@@ -180,10 +180,10 @@ with tab2:
                         time.sleep(0.01)
                         yield char
 
-            st.chat_message("assistant").write_stream(capture(res_stream, response_message))
-            st.session_state["user_history_store"].add_message(session_id=session_id, role="user", content=prompt)
-            st.session_state["user_history_store"].add_message(session_id=session_id, role="assistant",
-                                                               content=response_message[-1])
+            assistant_placeholder = st.chat_message("assistant")
+            response_text = assistant_placeholder.write_stream(capture(res_stream, response_message))
+
+        # 将助手回复添加到会话历史
+        st.session_state.chat_messages.append({"role": "assistant", "content": response_text})
 
         st.rerun()
-
